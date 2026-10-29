@@ -54,19 +54,19 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 0 — Project Foundation
 
-- [ ] `go.mod` + module path; `cmd/api`, `cmd/seed` entry points
-- [ ] Package skeleton: `internal/<feature>/{domain,dto,port,errors,service}`, `internal/<feature>/http/`, `internal/<feature>/adapter/`, `internal/router/`, `pkg/`
-- [ ] Config Service (`internal/config` — env-driven, validated at startup, fails fast)
-- [ ] Structured Logging (`pkg/logger` — Zap, JSON output, includes `request_id`)
-- [ ] `pkg/id` — UUID v7 helper (`id.NewV7()`)
-- [ ] `pkg/errors` — `AppError` type with a **real** `cause` field and `Unwrap()`; constructors take an optional cause
-- [ ] `pkg/response` — uniform JSON success/error envelopes; `ErrorBody`/`ErrorEnvelope` types defined here
-- [ ] Graceful Shutdown (`signal.NotifyContext` + `http.Server.Shutdown`)
-- [ ] Health Check endpoint (`GET /health` — checks DB + Redis, returns 200/503)
-- [ ] Middleware: Request ID, **AccessLog** (not `Logger` — the name collides with the service's logger field), Recovery, CORS whitelist (no wildcard)
-- [ ] Makefile (`make run`, `make test`, `make test-integration`, `make lint`, `make seed`, `make swagger`)
-- [ ] Docker Compose (app + PostgreSQL + Redis)
-- [ ] `golangci-lint` config incl. the **depguard** import-boundary rule from `ARCHITECTURE.md`
+- [x] `go.mod` + module path; `cmd/api`, `cmd/seed` entry points
+- [x] Package skeleton: `internal/<feature>/{domain,dto,port,errors,service}`, `internal/<feature>/http/`, `internal/<feature>/adapter/`, `internal/router/`, `pkg/`
+- [x] Config Service (`internal/config` — env-driven, validated at startup, fails fast)
+- [x] Structured Logging (`pkg/logger` — Zap, JSON output, includes `request_id`)
+- [x] `pkg/id` — UUID v7 helper (`id.NewV7()`)
+- [x] `pkg/errors` — `AppError` type with a **real** `cause` field and `Unwrap()`; constructors take an optional cause
+- [x] `pkg/response` — uniform JSON success/error envelopes; `ErrorBody`/`ErrorEnvelope` types defined here
+- [x] Graceful Shutdown (`signal.NotifyContext` + `http.Server.Shutdown`)
+- [x] Health Check endpoint (`GET /health` — checks DB + Redis, returns 200/503)
+- [x] Middleware: Request ID, **AccessLog** (not `Logger` — the name collides with the service's logger field), Recovery, CORS whitelist (no wildcard)
+- [x] Makefile (`make run`, `make test`, `make test-integration`, `make lint`, `make seed`, `make swagger`)
+- [x] Docker Compose (app + PostgreSQL + Redis)
+- [x] `golangci-lint` config incl. the **depguard** import-boundary rule from `ARCHITECTURE.md`
 
 **Done when:** `docker compose up` brings the app up, `/health` returns 200, `make test` passes, and the linter **rejects** a `gin` import in `internal/user/service.go`.
 
@@ -76,16 +76,16 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 1 — Database, Migrations & Seeding
 
-- [ ] PostgreSQL + GORM connection (`pkg/database` — pool sizing, ping, close)
-- [ ] Versioned migrations in `migrations/` (`golang-migrate`, up + down files)
-- [ ] `internal/user` inner package: `domain.go`, `dto.go`, `port.go`, `errors.go`, `service.go`
-- [ ] `internal/user/adapter/record.go` (GORM model, `uuid.UUID` PK)
-- [ ] `internal/user/adapter/mapper.go` — `toDomain` / `toRecord`, both **returning an error** (UUID parsing)
-- [ ] `internal/user/adapter/repository_gorm.go` — implements `user.UserReader` / `user.UserWriter`, returns `user.ErrNotFound`
-- [ ] `internal/user/http/handler.go` + `internal/user/http/errors.go` — `toAppError` mapping
-- [ ] `internal/router` — first route registered
-- [ ] Seeding (`cmd/seed` — default admin with `RoleAdmin`; **idempotent**, safe to re-run)
-- [ ] `testutil/` — Testcontainers PostgreSQL helper + migration runner
+- [x] PostgreSQL + GORM connection (`pkg/database` — pool sizing, ping, close)
+- [x] Versioned migrations in `migrations/` (`golang-migrate`, up + down files)
+- [x] `internal/user` inner package: `domain.go`, `dto.go`, `port.go`, `errors.go`, `service.go`
+- [x] `internal/user/adapter/record.go` (GORM model, `uuid.UUID` PK)
+- [x] `internal/user/adapter/mapper.go` — `toDomain` / `toRecord`, both **returning an error** (UUID parsing)
+- [x] `internal/user/adapter/repository_gorm.go` — implements `user.UserReader` / `user.UserWriter`, returns `user.ErrNotFound`
+- [x] `internal/user/http/handler.go` + `internal/user/http/errors.go` — `toAppError` mapping
+- [x] `internal/router` — first route registered
+- [x] Seeding (`cmd/seed` — default admin with `RoleAdmin`; **idempotent**, safe to re-run)
+- [x] `testutil/` — Testcontainers PostgreSQL helper + migration runner
 
 **Done when:** `make migrate-up` applies cleanly, `make seed` is idempotent, the repository round-trips a user, and `make lint` confirms `internal/user` imports no `gin`.
 
