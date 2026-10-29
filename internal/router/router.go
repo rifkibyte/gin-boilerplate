@@ -21,6 +21,12 @@ func New(userHandler *userhttp.Handler) *gin.Engine {
 	return r
 }
 
+// healthCheck godoc
+// @Summary Health check
+// @Tags health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 // healthCheck returns 200 when the server is alive.
 func healthCheck(c *gin.Context) {
 	c.JSON(200, gin.H{"status": "ok"})

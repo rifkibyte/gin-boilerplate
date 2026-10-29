@@ -1,7 +1,7 @@
 .PHONY: run test test-integration lint seed migrate-up migrate-down swagger cover
 
 run:
-	go run ./cmd/api
+	JWT_SECRET=$${JWT_SECRET:-change-me-in-production-at-least-32-chars-long} go run ./cmd/api
 
 test:
 	go test ./...
@@ -15,7 +15,7 @@ lint:
 	golangci-lint run
 
 seed:
-	go run ./cmd/seed
+	JWT_SECRET=$${JWT_SECRET:-change-me-in-production-at-least-32-chars-long} go run ./cmd/seed
 
 migrate-up:
 	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/gin_boilerplate?sslmode=disable" up

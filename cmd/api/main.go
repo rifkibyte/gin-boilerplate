@@ -10,6 +10,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	_ "github.com/rifkibyte/gin-boilerplate/swagger"
 	"go.uber.org/zap"
 
 	"github.com/rifkibyte/gin-boilerplate/internal/config"
@@ -26,6 +29,11 @@ import (
 	"github.com/rifkibyte/gin-boilerplate/pkg/logger"
 )
 
+// @title Gin Boilerplate API
+// @version 1.0
+// @description Production-grade Gin boilerplate
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
@@ -85,6 +93,7 @@ func main() {
 
 	// Router.
 	r := router.New(userHandler)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/api/v1/auth/register", authHandler.Register)
 	r.POST("/api/v1/auth/login", authHandler.Login)
 	r.POST("/api/v1/auth/refresh", authHandler.Refresh)

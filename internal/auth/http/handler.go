@@ -18,6 +18,14 @@ func NewHandler(svc *auth.Service) *Handler {
 	return &Handler{svc: svc}
 }
 
+// Register godoc
+// @Summary Register a new user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body auth.RegisterRequest true "Register payload"
+// @Success 201 {object} user.UserResponse
+// @Router /auth/register [post]
 func (h *Handler) Register(c *gin.Context) {
 	var req auth.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,6 +47,14 @@ func (h *Handler) Register(c *gin.Context) {
 	})
 }
 
+// Login godoc
+// @Summary Login user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body auth.LoginRequest true "Login payload"
+// @Success 200 {object} auth.TokenResponse
+// @Router /auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req auth.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -59,6 +75,14 @@ func (h *Handler) Login(c *gin.Context) {
 	})
 }
 
+// Refresh godoc
+// @Summary Refresh tokens
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body auth.RefreshRequest true "Refresh payload"
+// @Success 200 {object} auth.TokenResponse
+// @Router /auth/refresh [post]
 func (h *Handler) Refresh(c *gin.Context) {
 	var req auth.RefreshRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -79,6 +103,14 @@ func (h *Handler) Refresh(c *gin.Context) {
 	})
 }
 
+// Logout godoc
+// @Summary Logout user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body auth.RefreshRequest true "Logout payload"
+// @Success 204
+// @Router /auth/logout [post]
 func (h *Handler) Logout(c *gin.Context) {
 	var req auth.RefreshRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

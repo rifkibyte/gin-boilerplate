@@ -177,6 +177,8 @@ into three packages:
 3. **Infrastructure adapter** (`internal/<feature>/adapter/`) — GORM, SMTP, S3, Redis.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design.
+See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for migrations, seeding, and local
+database/email tooling (Adminer, Maildev).
 
 ## Development
 

@@ -19,6 +19,14 @@ func NewHandler(svc *user.Service) *Handler {
 	return &Handler{svc: svc}
 }
 
+// Create godoc
+// @Summary Create user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body user.CreateUserRequest true "Create payload"
+// @Success 201 {object} user.UserResponse
+// @Router /users [post]
 // Create handles POST /users.
 func (h *Handler) Create(c *gin.Context) {
 	var req user.CreateUserRequest
@@ -38,6 +46,12 @@ func (h *Handler) Create(c *gin.Context) {
 	response.Created(c, toUserResponse(u))
 }
 
+// List godoc
+// @Summary List users
+// @Tags users
+// @Produce json
+// @Success 200 {array} user.UserResponse
+// @Router /users [get]
 // List handles GET /users.
 func (h *Handler) List(c *gin.Context) {
 	users, err := h.svc.List(c.Request.Context())
