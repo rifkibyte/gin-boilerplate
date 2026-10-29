@@ -95,18 +95,18 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 2 — Auth & User ⭐ *learning priority*
 
-- [ ] `POST /auth/register` — bcrypt hashing, email uniqueness via `user.ErrEmailTaken`; **role is server-side** (`RoleUser`)
-- [ ] `POST /auth/login` — JWT access + refresh tokens
-- [ ] `internal/auth` inner package: `domain`, `dto`, `port` (`UserFinder`, `TokenIssuer`, `TokenStore`, `Mailer`), `errors`, `service`
-- [ ] `internal/auth/http/handler.go` + `internal/auth/http/errors.go`
-- [ ] `internal/auth/adapter/token_jwt.go` — HS256 issuer/verifier, separates access vs refresh claims
-- [ ] `internal/auth/adapter/token_redis.go` — refresh-token store with TTL + revocation
-- [ ] `internal/auth/adapter/mailer_smtp.go` — `Mailer` port, SMTP implementation
-- [ ] Auth middleware — validates JWT, rejects invalid/expired tokens with 401
-- [ ] RBAC middleware — `RequireRole(user.RoleAdmin)`; regular user gets 403
-- [ ] Admin-only user listing (`GET /users`) — the first caller of a `UserReader.FindByRole`-style port, added **only** because an endpoint needs it
-- [ ] Request validation with user-friendly messages (custom validator)
-- [ ] CORS whitelist middleware (no wildcard)
+- [x] `POST /auth/register` — bcrypt hashing, email uniqueness via `user.ErrEmailTaken`; **role is server-side** (`RoleUser`)
+- [x] `POST /auth/login` — JWT access + refresh tokens
+- [x] `internal/auth` inner package: `domain`, `dto`, `port` (`UserFinder`, `TokenIssuer`, `TokenStore`, `Mailer`), `errors`, `service`
+- [x] `internal/auth/http/handler.go` + `internal/auth/http/errors.go`
+- [x] `internal/auth/adapter/token_jwt.go` — HS256 issuer/verifier, separates access vs refresh claims
+- [x] `internal/auth/adapter/token_redis.go` — refresh-token store with TTL + revocation
+- [x] `internal/auth/adapter/mailer_smtp.go` — `Mailer` port, SMTP implementation
+- [x] Auth middleware — validates JWT, rejects invalid/expired tokens with 401
+- [x] RBAC middleware — `RequireRole(user.RoleAdmin)`; regular user gets 403
+- [x] Admin-only user listing (`GET /users`) — the first caller of a `UserReader.FindByRole`-style port, added **only** because an endpoint needs it
+- [x] Request validation with user-friendly messages (custom validator)
+- [x] CORS whitelist middleware (no wildcard)
 
 **Done when:** full auth flow works end-to-end and is covered by tests; the linter confirms `internal/auth` and `internal/user` import no `gin`.
 

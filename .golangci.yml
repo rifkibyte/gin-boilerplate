@@ -1,0 +1,27 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - depguard
+    - govet
+    - staticcheck
+    - unused
+    - errcheck
+    - ineffassign
+
+  settings:
+    depguard:
+      rules:
+        domain-purity:
+          files:
+            - "**/internal/*/*.go"
+            - "!**/internal/middleware/*.go"
+            - "!**/internal/router/*.go"
+          deny:
+            - pkg: github.com/gin-gonic/gin
+              desc: "the inner feature package must stay HTTP-free"
+            - pkg: gorm.io/gorm
+              desc: "the inner feature package must stay persistence-free"
+            - pkg: net/http
+              desc: "the inner feature package must not speak HTTP"
