@@ -19,6 +19,16 @@ func NewHandler(svc *file.Service) *Handler {
 
 const maxUploadSize = 10 * 1024 * 1024
 
+// Upload godoc
+// @Summary Upload a file
+// @Tags files
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "File to upload"
+// @Success 201 {object} file.UploadResponse
+// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 413 {object} response.ErrorEnvelope
+// @Router /files [post]
 func (h *Handler) Upload(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {
@@ -67,6 +77,13 @@ func (h *Handler) Upload(c *gin.Context) {
 	})
 }
 
+// List godoc
+// @Summary List files for current user
+// @Tags files
+// @Produce json
+// @Success 200 {array} file.UploadResponse
+// @Failure 401 {object} response.ErrorEnvelope
+// @Router /files [get]
 func (h *Handler) List(c *gin.Context) {
 	userID := c.GetString("user_id")
 	if userID == "" {

@@ -85,6 +85,36 @@ func (c *Client) Expire(ctx context.Context, key string, ttl time.Duration) erro
 	return nil
 }
 
+// Cache-aside helper.
+//
+// Contract:
+//   - Key format: callers own the key namespace (e.g. "user:<uuid>"); this helper
+//     does not impose a format but documents that keys must be unique per entity.
+//   - TTL: every cached value carries an explicit TTL supplied by the caller.
+//   - Invalidation trigger: callers delete the key (via Delete) whenever the
+//     underlying data changes.
+//   - Cache failures never fail the request: Get/Set errors are swallowed and the
+//     fetch function's result is returned instead.
+//
+// GetOrSet returns the cached value for key when present. On a miss (or on any
+// cache error) it invokes fetch, stores the result with the given TTL (best
+// effort), and returns it. A cache read/write failure never propagates.
+func (c *Client) GetOrSet(ctx context.Context, key string, ttl time.Duration, fetch func(context.Context) (string, error)) (string, error) {
+	if value, err := c.Get(ctx, key); err == nil && value != "" {
+		return value, nil
+	}
+
+	value, err := fetch(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// Best effort: ignore cache write failures.
+	_ = c.Set(ctx, key, value, ttl)
+
+	return value, nil
+}
+
 // Close releases the Redis connection.
 func (c *Client) Close() error {
 	return c.rdb.Close()

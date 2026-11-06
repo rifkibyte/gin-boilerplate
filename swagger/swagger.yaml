@@ -37,6 +37,29 @@ definitions:
       refresh_token:
         type: string
     type: object
+  file.UploadResponse:
+    properties:
+      content_type:
+        type: string
+      filename:
+        type: string
+      id:
+        type: string
+      size:
+        type: integer
+    type: object
+  response.ErrorBody:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.ErrorEnvelope:
+    properties:
+      error:
+        $ref: '#/definitions/response.ErrorBody'
+    type: object
   user.CreateUserRequest:
     properties:
       email:
@@ -156,6 +179,51 @@ paths:
       summary: Register a new user
       tags:
       - auth
+  /files:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/file.UploadResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+      summary: List files for current user
+      tags:
+      - files
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/file.UploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+        "413":
+          description: Request Entity Too Large
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+      summary: Upload a file
+      tags:
+      - files
   /health:
     get:
       produces:

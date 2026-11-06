@@ -200,9 +200,12 @@ func Auth(validate func(token string) (userID, role string, err error)) gin.Hand
 	}
 }
 
-// RateLimit returns a middleware that limits requests per client IP using
+// RateLimitMiddleware returns a middleware that limits requests per client IP using
 // Redis. Excess requests receive 429.
-func RateLimit(
+//
+// The middleware fails open: if the increment call errors (e.g. Redis is down),
+// the request is allowed through so a Redis outage cannot break core flows.
+func RateLimitMiddleware(
 	increment func(ctx context.Context, key string) (int64, error),
 	limit int,
 	window time.Duration,
@@ -228,4 +231,13 @@ func RateLimit(
 
 		c.Next()
 	}
+}
+
+// RateLimit is an alias for RateLimitMiddleware, kept for backwards compatibility.
+func RateLimit(
+	increment func(ctx context.Context, key string) (int64, error),
+	limit int,
+	window time.Duration,
+) gin.HandlerFunc {
+	return RateLimitMiddleware(increment, limit, window)
 }

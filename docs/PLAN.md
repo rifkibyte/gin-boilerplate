@@ -135,10 +135,10 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 4 — Redis
 
-- [ ] `pkg/cache` — Redis client wrapper (get/set with TTL, ping, close)
-- [ ] Redis-backed rate limiting middleware (`RateLimitMiddleware`, excess → 429)
-- [ ] Graceful degradation — Redis down → API still works (fall back to DB / skip cache)
-- [ ] Cache-aside helper with an explicit contract: key format, TTL, invalidation trigger, and **cache failures never fail the request**
+- [x] `pkg/cache` — Redis client wrapper (get/set with TTL, ping, close)
+- [x] Redis-backed rate limiting middleware (`RateLimitMiddleware`, excess → 429)
+- [x] Graceful degradation — Redis down → API still works (fall back to DB / skip cache)
+- [x] Cache-aside helper with an explicit contract: key format, TTL, invalidation trigger, and **cache failures never fail the request**
 
 **Done when:** API survives a Redis outage without breaking core flows.
 
@@ -148,12 +148,12 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 5 — Documentation & Swagger
 
-- [ ] Swagger annotations in handlers (`@Summary`, `@Tags`, `@Router`, `@Param`, `@Success`, `@Failure`)
-- [ ] General API info block in `cmd/api/main.go`
-- [ ] `swag init -o swagger` → `swagger/docs.go`, `swagger/swagger.json`, `swagger/swagger.yaml` (**not** `docs/`, which stays markdown-only)
-- [ ] `/swagger/*any` endpoint serving Swagger UI
-- [ ] Every endpoint documented; errors use the shared `ErrorEnvelope` schema
-- [ ] `swag` version pinned (`go run github.com/swaggo/swag/cmd/swag@v1.16.6`) so the drift check is deterministic
+- [x] Swagger annotations in handlers (`@Summary`, `@Tags`, `@Router`, `@Param`, `@Success`, `@Failure`)
+- [x] General API info block in `cmd/api/main.go`
+- [x] `swag init -o swagger` → `swagger/docs.go`, `swagger/swagger.json`, `swagger/swagger.yaml` (**not** `docs/`, which stays markdown-only)
+- [x] `/swagger/*any` endpoint serving Swagger UI
+- [x] Every endpoint documented; errors use the shared `ErrorEnvelope` schema
+- [x] `swag` version pinned (`go run github.com/swaggo/swag/cmd/swag@v1.16.6`) so the drift check is deterministic
 
 **Done when:** `swagger.json` generates without errors and every route in `internal/router` appears in it.
 

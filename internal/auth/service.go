@@ -114,8 +114,10 @@ func (s *Service) Login(ctx context.Context, cmd LoginCommand) (*TokenPair, erro
 	}
 
 	if s.store != nil {
-		if err := s.store.Save(ctx, refreshToken, u.ID, 7*24*time.Hour); err != nil {
-			return nil, err
+		// Graceful degradation: a Redis outage must not block login.
+		// The refresh token is still returned; only revocation tracking is lost.
+		if err := s.store.Save(ctx, refreshToken, u.ID, 7*24*time.Hour); err != nil && s.logger != nil {
+			s.logger.Warn("token store save failed; continuing without revocation tracking", zap.Error(err))
 		}
 	}
 

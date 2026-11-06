@@ -10,15 +10,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	swaggerFiles "github.com/swaggo/files"
 	_ "github.com/rifkibyte/gin-boilerplate/swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/zap"
 
-	"github.com/rifkibyte/gin-boilerplate/internal/config"
 	"github.com/rifkibyte/gin-boilerplate/internal/auth"
 	authadapter "github.com/rifkibyte/gin-boilerplate/internal/auth/adapter"
 	authhttp "github.com/rifkibyte/gin-boilerplate/internal/auth/http"
+	"github.com/rifkibyte/gin-boilerplate/internal/config"
 	"github.com/rifkibyte/gin-boilerplate/internal/file"
 	fileadapter "github.com/rifkibyte/gin-boilerplate/internal/file/adapter"
 	filehttp "github.com/rifkibyte/gin-boilerplate/internal/file/http"
@@ -118,6 +118,19 @@ func main() {
 
 	// Router.
 	r := router.New(userHandler)
+
+	// Redis-backed rate limiting (fail-open on Redis outage).
+	rateLimitIncrement := func(ctx context.Context, key string) (int64, error) {
+		n, err := redisClient.Increment(ctx, key)
+		if err != nil {
+			return 0, err
+		}
+		if n == 1 {
+			_ = redisClient.Expire(ctx, key, time.Minute)
+		}
+		return n, err
+	}
+	r.Use(middleware.RateLimitMiddleware(rateLimitIncrement, 100, time.Minute))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/api/v1/auth/register", authHandler.Register)
 	r.POST("/api/v1/auth/login", authHandler.Login)
