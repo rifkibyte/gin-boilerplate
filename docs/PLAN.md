@@ -120,12 +120,12 @@ These were decided up front so the phases below don't re-litigate them.
 
 ### Phase 3 — File Upload
 
-- [ ] `internal/file` inner package: `domain`, `dto`, `port` (`Storage`), `errors`, `service`
-- [ ] `internal/file/http/handler.go` + `internal/file/http/errors.go`
-- [ ] `internal/file/adapter/record.go` + `adapter/mapper.go` + `adapter/repository_gorm.go` — file metadata persistence
-- [ ] `internal/file/adapter/storage_local.go` — local disk driver
-- [ ] `internal/file/adapter/storage_s3.go` — S3 driver (MinIO in tests)
-- [ ] `POST /files` — multipart upload + validation (content type, size limit)
+- [x] `internal/file` inner package: `domain`, `dto`, `port` (`Storage`), `errors`, `service`
+- [x] `internal/file/http/handler.go` + `internal/file/http/errors.go`
+- [x] `internal/file/adapter/record.go` + `adapter/mapper.go` + `adapter/repository_gorm.go` — file metadata persistence
+- [x] `internal/file/adapter/storage_local.go` — local disk driver
+- [x] `internal/file/adapter/storage_s3.go` — S3 driver (MinIO in tests)
+- [x] `POST /files` — multipart upload + validation (content type, size limit)
 
 **Done when:** uploads work for both drivers; invalid files rejected with a clear message; oversized uploads rejected before the body is fully buffered.
 

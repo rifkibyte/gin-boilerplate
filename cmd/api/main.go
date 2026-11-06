@@ -19,6 +19,9 @@ import (
 	"github.com/rifkibyte/gin-boilerplate/internal/auth"
 	authadapter "github.com/rifkibyte/gin-boilerplate/internal/auth/adapter"
 	authhttp "github.com/rifkibyte/gin-boilerplate/internal/auth/http"
+	"github.com/rifkibyte/gin-boilerplate/internal/file"
+	fileadapter "github.com/rifkibyte/gin-boilerplate/internal/file/adapter"
+	filehttp "github.com/rifkibyte/gin-boilerplate/internal/file/http"
 	"github.com/rifkibyte/gin-boilerplate/internal/middleware"
 	"github.com/rifkibyte/gin-boilerplate/internal/router"
 	"github.com/rifkibyte/gin-boilerplate/internal/user"
@@ -91,6 +94,28 @@ func main() {
 	})
 	adminMiddleware := middleware.RequireRole(string(user.RoleAdmin))
 
+	// Wire file feature.
+	fileRepo := fileadapter.NewFileRepositoryGORM(db)
+	var fileStorage file.Storage
+	if cfg.Storage.Driver == "s3" {
+		s3Storage, err := fileadapter.NewS3Storage(
+			context.Background(),
+			cfg.Storage.S3.Bucket,
+			cfg.Storage.S3.Region,
+			cfg.Storage.S3.Endpoint,
+			cfg.Storage.S3.AccessKey,
+			cfg.Storage.S3.SecretKey,
+		)
+		if err != nil {
+			log.Fatal("s3 storage init failed", zap.Error(err))
+		}
+		fileStorage = s3Storage
+	} else {
+		fileStorage = fileadapter.NewLocalStorage(cfg.Storage.Local.Path)
+	}
+	fileSvc := file.NewService(fileRepo, fileStorage, log)
+	fileHandler := filehttp.NewHandler(fileSvc)
+
 	// Router.
 	r := router.New(userHandler)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -99,6 +124,8 @@ func main() {
 	r.POST("/api/v1/auth/refresh", authHandler.Refresh)
 	r.POST("/api/v1/auth/logout", authHandler.Logout)
 	r.GET("/api/v1/users", authMiddleware, adminMiddleware, userHandler.List)
+	r.POST("/api/v1/files", authMiddleware, fileHandler.Upload)
+	r.GET("/api/v1/files", authMiddleware, fileHandler.List)
 
 	srv := &http.Server{
 		Addr:         cfg.HTTP.Addr,
